@@ -28,7 +28,7 @@ def evaluate_one_problem(p, tour):
         return "The total tour length exceeds the maximum length."
 
     # Compute the total prize
-    total_prize = np.sum(p['prize'][tour[1:-1]])  # Exclude the depot
+    total_prize = np.sum(p['prize'][tour[1:-1] - 1])  # Exclude the depot
 
     return total_distance, total_prize
 
@@ -46,7 +46,7 @@ def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=N
     total_prize = 0
 
     # Evaluate the solution function on every instance in the dataset
-    for p in dataset:
+    for p in datase t:
         start_time = time.time()
         tour = solution_func(p)
         end_time = time.time()
