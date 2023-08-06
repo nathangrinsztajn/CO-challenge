@@ -41,6 +41,9 @@ def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=N
     # Use only a subset of the dataset if subset_size is specified
     if subset_size is not None:
         dataset = dataset[:subset_size]
+        dataset_size = subset_size
+    else:
+        dataset_size = len(dataset)
 
     total_time = 0
     total_prize = 0
@@ -62,16 +65,6 @@ def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=N
         total_prize += total_prize
 
     # Calculate the average prize
-    average_prize = total_prize / len(dataset)
+    average_prize = total_prize / dataset_size
 
     return average_prize, total_time
-
-
-if __name__ == '__main__':
-    # Test the function with a solution function that always returns the trivial tour
-    def trivial_solution_func(p):
-        return np.array([0, 0])
-
-
-    average_prize, total_time = evaluate(trivial_solution_func, '/mnt/data/op_dataset.pkl', subset_size=10)
-    average_prize, total_time
