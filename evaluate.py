@@ -46,7 +46,7 @@ def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=N
     total_prize = 0
 
     # Evaluate the solution function on every instance in the dataset
-    for p in datase t:
+    for p in dataset:
         start_time = time.time()
         tour = solution_func(p)
         end_time = time.time()
