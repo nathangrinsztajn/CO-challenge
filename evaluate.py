@@ -61,8 +61,8 @@ def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=N
         if isinstance(result, str):  # The solution is invalid
             raise ValueError(f"Invalid solution for problem {p}: {result}")
 
-        total_distance, total_prize = result
-        total_prize += total_prize
+        total_distance, prize = result
+        total_prize += prize
 
     # Calculate the average prize
     average_prize = total_prize / dataset_size
