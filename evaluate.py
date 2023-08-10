@@ -67,4 +67,7 @@ def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=N
     # Calculate the average prize
     average_prize = total_prize / dataset_size
 
+    print(f"Average prize: {average_prize:.3f}")
+    print(f"Average time: {total_time / dataset_size:.2f} seconds")
+
     return average_prize, total_time
