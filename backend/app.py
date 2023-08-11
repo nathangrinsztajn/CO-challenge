@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -14,6 +14,9 @@ class LeaderboardEntry(db.Model):
     time = db.Column(db.Float, nullable=False)
     performance = db.Column(db.Float, nullable=False)
     function_code = db.Column(db.Text, nullable=False)
+
+with app.app_context():
+    db.create_all()
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -38,7 +41,11 @@ def get_leaderboard():
         'function': entry.function_code
     } for entry in entries]), 200
 
+@app.route('/view_leaderboard', methods=['GET'])
+def view_leaderboard():
+    entries = LeaderboardEntry.query.all()
+    return render_template('leaderboard.html', leaderboard=entries)
+
 if __name__ == '__main__':
     # Create tables if they don't exist
-    db.create_all()
     app.run()

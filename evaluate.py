@@ -1,6 +1,8 @@
 import time
 import pickle
 import numpy as np
+import inspect
+from utils import post_data_to_backend
 
 
 def evaluate_one_problem(p, tour):
@@ -67,4 +69,45 @@ def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=N
     # Calculate the average prize
     average_prize = total_prize / dataset_size
 
+    function_code = inspect.getsource(solution_func)
+    post_data_to_backend(name="Nathan", time=total_time, performance=average_prize, function_code=function_code)
+
     return average_prize, total_time
+
+if __name__ == '__main__':
+    def greedy_heuristic(p):
+
+        def calculate_distance(point1, point2):
+            return np.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
+
+        tour = [0]
+        remaining_length = p['max_length']
+
+        nodes = np.column_stack((p['loc'], p['prize']))
+        depot = np.array([p['depot'][0], p['depot'][1], 0])
+        nodes = np.insert(nodes, 0, depot, axis=0)
+
+        while True:
+            current_node = tour[-1]
+            best_ratio = -np.inf
+            best_node = None
+            for i, node in enumerate(nodes):
+                if i not in tour:
+                    distance_to_node = calculate_distance(nodes[current_node][:2], node[:2])
+                    distance_to_depot = calculate_distance(node[:2], nodes[0][:2])
+                    if distance_to_node + distance_to_depot <= remaining_length:
+                        ratio = node[2] / distance_to_node
+                        if ratio > best_ratio:
+                            best_ratio = ratio
+                            best_node = i
+            if best_node is None:
+                break
+            else:
+                tour.append(best_node)
+                remaining_length -= calculate_distance(nodes[current_node][:2], nodes[best_node][:2])
+
+        tour.append(0)
+
+        return np.array(tour)
+
+    evaluate(greedy_heuristic, dataset_path='data/op/op_uniform.pkl', subset_size=10)
