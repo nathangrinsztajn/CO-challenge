@@ -4,19 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaderboard</title>
-    <!-- Include Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-    .centered-table {
-        margin-left: auto;
-        margin-right: auto;
-    }
+        .centered-table {
+            margin-left: auto;
+            margin-right: auto;
+        }
     </style>
 </head>
 <body>
 <div class="container mt-5">
     <h2>Leaderboard</h2>
-    <table class="table table-striped">
+    <table class="table table-striped centered-table">
         <thead>
         <tr>
             <th>Name</th>
@@ -29,12 +28,13 @@
             <tr>
                 <td>{{ entry.name }}</td>
                 <td>{{ "{:.3f}".format(entry.performance) }}</td>
-<!--                <td>{{ entry.performance }}</td>-->
                 <td>{{ "{:.1f}".format(entry.time) }}</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+    <!-- Button to display the tradeoff plot -->
+    <a href="/view_tradeoff" class="btn btn-primary mt-3 float-right">Show Tradeoff Plot</a>
 </div>
 </body>
 </html>
