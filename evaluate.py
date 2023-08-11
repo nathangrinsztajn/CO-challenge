@@ -36,7 +36,7 @@ def evaluate_one_problem(p, tour):
 
 
 def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=None):
-    # Load the dataset
+
     with open(dataset_path, 'rb') as f:
         dataset = pickle.load(f)
 
@@ -66,11 +66,22 @@ def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=N
         total_distance, prize = result
         total_prize += prize
 
-    # Calculate the average prize
     average_prize = total_prize / dataset_size
 
     function_code = inspect.getsource(solution_func)
-    post_data_to_backend(name="Nathan", time=total_time, performance=average_prize, function_code=function_code)
+
+    print(f"Runtime: {total_time}")
+    print(f"Average prizes: {average_prize}")
+
+    # It needs to run under 10 minutes
+    if total_time > 600:
+        print("Data are not pushed to the server as the runtime is greater than 10 minutes")
+    elif dataset_size < len(dataset):
+        print("Data are not pushed to the server as the"
+              " evaluation was performed on a subset of {}/{} instances".format(dataset_size, len(dataset)))
+    else:
+        post_data_to_backend(name="Nathan", time=total_time, performance=average_prize, function_code=function_code)
+        print("Evaluation scores pushed to remote server!")
 
     return average_prize, total_time
 

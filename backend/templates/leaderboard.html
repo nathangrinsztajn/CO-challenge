@@ -15,26 +15,27 @@
 <body>
 <div class="container mt-5">
     <h2>Leaderboard</h2>
-    <table class="table table-striped centered-table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Performance</th>
-            <th>Time</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for entry in leaderboard %}
+    <a href="/view_tradeoff" class="btn btn-primary mb-3">Show Tradeoff Plot</a>
+    <div>
+        <table class="table table-striped centered-table">
+            <thead>
             <tr>
-                <td>{{ entry.name }}</td>
-                <td>{{ "{:.3f}".format(entry.performance) }}</td>
-                <td>{{ "{:.1f}".format(entry.time) }}</td>
+                <th>Name</th>
+                <th>Performance</th>
+                <th>Runtime</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    <!-- Button to display the tradeoff plot -->
-    <a href="/view_tradeoff" class="btn btn-primary mt-3 float-right">Show Tradeoff Plot</a>
+            </thead>
+            <tbody>
+            {% for entry in leaderboard %}
+                <tr>
+                    <td>{{ entry.name }}</td>
+                    <td>{{ "{:.3f}".format(entry.performance) }}</td>
+                    <td>{{ "{:.1f}".format(entry.time) }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 </body>
 </html>
