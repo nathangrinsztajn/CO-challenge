@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time-Performance Tradeoff</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Leaderboard</h2>
+    <!-- Add the button here -->
+    <a href="/view_tradeoff" class="btn btn-primary mb-3">View Time-Performance Tradeoff</a>
+    <!-- ... rest of your table code ... -->
+</div>
+<div class="container mt-5">
+    <h2>Time-Performance Tradeoff</h2>
+    <div id="plotly-div"></div>
+</div>
+
+<script>
+    fetch('/tradeoff_data')
+        .then(response => response.json())
+        .then(data => {
+            const trace = {
+                x: data.map(entry => entry.time),
+                y: data.map(entry => entry.performance),
+                text: data.map(entry => entry.name),
+                mode: 'markers',
+                type: 'scatter'
+            };
+
+            const layout = {
+                title: 'Time vs. Performance',
+                xaxis: {
+                    title: 'Time (s)'
+                },
+                yaxis: {
+                    title: 'Performance'
+                }
+            };
+
+            Plotly.newPlot('plotly-div', [trace], layout);
+        });
+</script>
+</body>
+</html>

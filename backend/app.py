@@ -41,10 +41,40 @@ def get_leaderboard():
         'function': entry.function_code
     } for entry in entries]), 200
 
+
+@app.route('/tradeoff_data', methods=['GET'])
+def tradeoff_data():
+    entries = LeaderboardEntry.query.all()
+    data = [{
+        'name': entry.name,
+        'time': float("{:.1f}".format(entry.time)),
+        'performance': float("{:.3f}".format(entry.performance))
+    } for entry in entries]
+
+    # Filter out dominated points
+    filtered_data = []
+    for d in data:
+        dominated = False
+        for other in data:
+            if (other['performance'] > d['performance'] and other['time'] <= d['time']):
+                dominated = True
+                break
+        if not dominated:
+            filtered_data.append(d)
+
+    return jsonify(filtered_data)
+
+
 @app.route('/view_leaderboard', methods=['GET'])
 def view_leaderboard():
-    entries = LeaderboardEntry.query.all()
+    entries = LeaderboardEntry.query.order_by(LeaderboardEntry.performance.desc()).all()
     return render_template('leaderboard.html', leaderboard=entries)
+
+
+@app.route('/view_tradeoff', methods=['GET'])
+def view_tradeoff():
+    return render_template('tradeoff.html')
+
 
 if __name__ == '__main__':
     # Create tables if they don't exist
