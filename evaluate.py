@@ -35,7 +35,9 @@ def evaluate_one_problem(p, tour):
     return total_distance, total_prize
 
 
-def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=None):
+def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=None, name="anon"):
+
+    print(f"Attempting an evaluation as {name}...")
 
     with open(dataset_path, 'rb') as f:
         dataset = pickle.load(f)
@@ -80,7 +82,7 @@ def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=N
         print("Data are not pushed to the server as the"
               " evaluation was performed on a subset of {}/{} instances".format(dataset_size, len(dataset)))
     else:
-        post_data_to_backend(name="Nathan", time=total_time, performance=average_prize, function_code=function_code)
+        post_data_to_backend(name=name, time=total_time, performance=average_prize, function_code=function_code)
         print("Evaluation scores pushed to remote server!")
 
     return average_prize, total_time
