@@ -76,11 +76,20 @@ def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=N
     print(f"Average prizes: {average_prize}")
 
     # It needs to run under 10 minutes
-    if total_time > 600:
-        print("Data are not pushed to the server as the runtime is greater than 10 minutes")
-    elif dataset_size < len(dataset):
+    if dataset_size < len(dataset):
         print("Data are not pushed to the server as the"
               " evaluation was performed on a subset of {}/{} instances".format(dataset_size, len(dataset)))
+
+        # interpolate the duration for the real dataset
+        # rounded interpolated time
+        interpolated_duration = round(total_time * len(dataset) / dataset_size)
+        if interpolated_duration > 600:
+            print(f"This heuristic runs in {total_time} for {dataset_size} instances, which would give"
+                  f" {interpolated_duration} for the full dataset")
+            print("Remember that the heuristic needs to run under 10 minutes for the full dataset")
+
+    elif total_time > 600:
+        print("Data are not pushed to the server as the runtime is greater than 10 minutes")
     else:
         post_data_to_backend(name=name, time=total_time, performance=average_prize, function_code=function_code)
         print("Evaluation scores pushed to remote server!")
