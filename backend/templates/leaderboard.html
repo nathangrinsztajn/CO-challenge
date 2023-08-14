@@ -24,6 +24,7 @@
                 <th>Name</th>
                 <th>Performance</th>
                 <th>Runtime</th>
+                <th>Submission time</th>
             </tr>
             </thead>
             <tbody>
@@ -32,6 +33,16 @@
                     <td>{{ entry.name }}</td>
                     <td>{{ "{:.3f}".format(entry.performance) }}</td>
                     <td>{{ "{:.1f}".format(entry.time) }}</td>
+                    <td>
+                        {% set time_diff = (current_time - entry.date).total_seconds() %}
+                        {% if time_diff < 3600 %}
+                            {{ "{:.0f}".format(time_diff/60) }}m
+                        {% elif time_diff < 86400 %}
+                            {{ "{:.0f}".format(time_diff/3600) }}h
+                        {% else %}
+                            {{ "{:.0f}".format(time_diff/86400) }}d
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>

@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -14,6 +15,7 @@ class LeaderboardEntry(db.Model):
     time = db.Column(db.Float, nullable=False)
     performance = db.Column(db.Float, nullable=False)
     function_code = db.Column(db.Text, nullable=False)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
 
 with app.app_context():
     db.create_all()
@@ -68,7 +70,8 @@ def tradeoff_data():
 @app.route('/view_leaderboard', methods=['GET'])
 def view_leaderboard():
     entries = LeaderboardEntry.query.order_by(LeaderboardEntry.performance.desc()).all()
-    return render_template('leaderboard.html', leaderboard=entries)
+    return render_template('leaderboard.html', leaderboard=entries, current_time=datetime.utcnow())
+
 
 
 @app.route('/view_tradeoff', methods=['GET'])
