@@ -1,6 +1,8 @@
 import time
 import pickle
 import numpy as np
+import inspect
+from utils import post_data_to_backend
 
 
 def evaluate_one_problem(p, tour):
@@ -33,8 +35,10 @@ def evaluate_one_problem(p, tour):
     return total_distance, total_prize
 
 
-def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=None):
-    # Load the dataset
+def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=None, name="anon"):
+
+    print(f"Attempting an evaluation as {name}...")
+
     with open(dataset_path, 'rb') as f:
         dataset = pickle.load(f)
 
@@ -64,10 +68,68 @@ def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=N
         total_distance, prize = result
         total_prize += prize
 
-    # Calculate the average prize
     average_prize = total_prize / dataset_size
 
-    print(f"Average prize: {average_prize:.3f}")
-    print(f"Average time: {total_time / dataset_size:.2f} seconds")
+    function_code = inspect.getsource(solution_func)
+
+    print(f"Runtime: {total_time}")
+    print(f"Average prizes: {average_prize}")
+
+    # It needs to run under 10 minutes
+    if dataset_size < len(dataset):
+        print("Data are not pushed to the server as the"
+              " evaluation was performed on a subset of {}/{} instances".format(dataset_size, len(dataset)))
+
+        # interpolate the duration for the real dataset
+        # rounded interpolated time
+        interpolated_duration = round(total_time * len(dataset) / dataset_size)
+        if interpolated_duration > 600:
+            print(f"This heuristic runs in {total_time} for {dataset_size} instances, which would give"
+                  f" {interpolated_duration} for the full dataset")
+            print("Remember that the heuristic needs to run under 10 minutes for the full dataset")
+
+    elif total_time > 600:
+        print("Data are not pushed to the server as the runtime is greater than 10 minutes")
+    else:
+        post_data_to_backend(name=name, time=total_time, performance=average_prize, function_code=function_code)
+        print("Evaluation scores pushed to remote server!")
 
     return average_prize, total_time
+
+if __name__ == '__main__':
+    def greedy_heuristic(p):
+
+        def calculate_distance(point1, point2):
+            return np.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
+
+        tour = [0]
+        remaining_length = p['max_length']
+
+        nodes = np.column_stack((p['loc'], p['prize']))
+        depot = np.array([p['depot'][0], p['depot'][1], 0])
+        nodes = np.insert(nodes, 0, depot, axis=0)
+
+        while True:
+            current_node = tour[-1]
+            best_ratio = -np.inf
+            best_node = None
+            for i, node in enumerate(nodes):
+                if i not in tour:
+                    distance_to_node = calculate_distance(nodes[current_node][:2], node[:2])
+                    distance_to_depot = calculate_distance(node[:2], nodes[0][:2])
+                    if distance_to_node + distance_to_depot <= remaining_length:
+                        ratio = node[2] / distance_to_node
+                        if ratio > best_ratio:
+                            best_ratio = ratio
+                            best_node = i
+            if best_node is None:
+                break
+            else:
+                tour.append(best_node)
+                remaining_length -= calculate_distance(nodes[current_node][:2], nodes[best_node][:2])
+
+        tour.append(0)
+
+        return np.array(tour)
+
+    evaluate(greedy_heuristic, dataset_path='data/op/op_uniform.pkl', subset_size=10)
