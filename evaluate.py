@@ -2,7 +2,7 @@ import time
 import pickle
 import numpy as np
 import inspect
-from utils import post_data_to_backend
+from .utils import post_data_to_backend
 
 
 def evaluate_one_problem(p, tour):
