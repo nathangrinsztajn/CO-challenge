@@ -42,6 +42,8 @@ def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=N
     with open(dataset_path, 'rb') as f:
         dataset = pickle.load(f)
 
+    len_full = len(dataset)
+
     # Use only a subset of the dataset if subset_size is specified
     if subset_size is not None:
         dataset = dataset[:subset_size]
@@ -76,13 +78,13 @@ def evaluate(solution_func, dataset_path='data/op/op_uniform.pkl', subset_size=N
     print(f"Average prizes: {average_prize}")
 
     # It needs to run under 10 minutes
-    if dataset_size < len(dataset):
+    if dataset_size < len_full:
         print("Data are not pushed to the server as the"
-              " evaluation was performed on a subset of {}/{} instances".format(dataset_size, len(dataset)))
+              " evaluation was performed on a subset of {}/{} instances".format(dataset_size, len_full))
 
         # interpolate the duration for the real dataset
         # rounded interpolated time
-        interpolated_duration = round(total_time * len(dataset) / dataset_size)
+        interpolated_duration = round(total_time * len_full / dataset_size)
         if interpolated_duration > 600:
             print(f"This heuristic runs in {total_time} for {dataset_size} instances, which would give"
                   f" {interpolated_duration} for the full dataset")
