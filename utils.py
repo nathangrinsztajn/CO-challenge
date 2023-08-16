@@ -1,6 +1,10 @@
 import requests
+
+URL = "http://llm4co.cxuf9445.odns.fr/"
+
+
 def post_data_to_backend(name, time, performance, function_code):
-    backend_url = "http://127.0.0.1:5000/register"
+    backend_url = URL + "register"
     payload = {
         'name': name,
         'time': time,
