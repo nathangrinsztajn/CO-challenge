@@ -11,6 +11,7 @@ def post_data_to_backend(name, time, performance, function_code):
         'performance': performance,
         'function': function_code
     }
+    print(backend_url)
     response = requests.post(backend_url, json=payload)
     if response.status_code != 200:
         print(f"Failed to post data to backend. Status code: {response.status_code}, Message: {response.text}")
