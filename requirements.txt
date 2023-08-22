@@ -1,4 +1,1 @@
 numpy
-flask
-flask_sqlalchemy
-flask-cors
